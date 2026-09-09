@@ -1,0 +1,21 @@
+.header {
+  background-color: var(--color-white);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+}
+
+.header__logo {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-main);
+}
+
+.header__logo-accent {
+  color: var(--color-accent);
+}
