@@ -1,0 +1,25 @@
+.navigation__list {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navigation__link {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--color-main);
+  transition: color 250ms ease;
+}
+
+.navigation__link:hover,
+.navigation__link:focus-visible {
+  color: var(--color-accent);
+}
+
+.navigation__link--active {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}

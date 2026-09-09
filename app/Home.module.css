@@ -1,0 +1,68 @@
+.hero {
+  position: relative;
+  display: flex;
+  /* Text sits at the bottom, below the car, not centered. */
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 60px;
+  /* 700px comes from the mockup; taller screens let the hero fill them. */
+  min-height: max(700px, calc(100vh - var(--header-height)));
+  overflow: hidden;
+  background-color: var(--color-main);
+}
+
+.hero__image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-overlay);
+}
+
+.hero__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 783px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--color-white);
+}
+
+.hero__title {
+  margin-bottom: 16px;
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hero__subtitle {
+  margin-bottom: 40px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.33;
+}
+
+.hero__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 276px;
+  padding: 12px 0;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  transition: background-color 250ms ease;
+}
+
+.hero__button:hover,
+.hero__button:focus-visible {
+  background-color: var(--color-accent-hover);
+}
