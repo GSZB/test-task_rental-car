@@ -1,6 +1,7 @@
 .container {
   width: 100%;
-  max-width: var(--container-width);
+  /* Padding sits outside the 1200px content width the mockup is built on. */
+  max-width: calc(var(--container-width) + 32px);
   margin: 0 auto;
   padding: 0 16px;
 }

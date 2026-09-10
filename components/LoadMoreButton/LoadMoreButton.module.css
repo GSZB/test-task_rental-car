@@ -1,0 +1,27 @@
+.load-more {
+  display: block;
+  width: 156px;
+  height: 44px;
+  margin: 0 auto;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-main);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  transition:
+    border-color 250ms ease,
+    color 250ms ease;
+}
+
+.load-more:hover:not(:disabled),
+.load-more:focus-visible:not(:disabled) {
+  border-color: var(--color-accent-hover);
+  color: var(--color-accent-hover);
+}
+
+.load-more:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

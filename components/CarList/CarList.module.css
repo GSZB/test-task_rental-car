@@ -1,0 +1,10 @@
+.car-list {
+  display: grid;
+  grid-template-columns: repeat(4, 276px);
+  justify-content: center;
+  gap: 48px 32px;
+}
+
+.car-list__item {
+  display: flex;
+}
