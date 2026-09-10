@@ -1,0 +1,156 @@
+"use client";
+
+import { useMutation } from "@tanstack/react-query";
+import { ErrorMessage, Field, Form, Formik, type FormikHelpers } from "formik";
+import toast from "react-hot-toast";
+import { PiWarningCircle } from "react-icons/pi";
+import * as Yup from "yup";
+import { createBookingRequest } from "@/lib/api/cars";
+import type { BookingRequest } from "@/types/car";
+import css from "./BookingForm.module.css";
+
+const initialValues: BookingRequest = {
+  name: "",
+  email: "",
+  comment: "",
+};
+
+const validationSchema = Yup.object({
+  name: Yup.string()
+    .matches(/\p{L}/u, "Please enter your name.")
+    .min(2, "Please enter your name.")
+    .max(60, "Please enter your name.")
+    .required("Please enter your name."),
+  email: Yup.string()
+    .email("Please enter your email.")
+    .required("Please enter your email."),
+  comment: Yup.string().max(500, "Comment is too long"),
+});
+
+interface BookingFormProps {
+  carId: string;
+}
+
+export default function BookingForm({ carId }: BookingFormProps) {
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (booking: BookingRequest) =>
+      createBookingRequest(carId, booking),
+  });
+
+  const handleSubmit = async (
+    values: BookingRequest,
+    helpers: FormikHelpers<BookingRequest>,
+  ) => {
+    try {
+      const response = await mutateAsync(values);
+      toast.success(response.message);
+      helpers.resetForm();
+    } catch {
+      toast.error("Could not send your booking request. Please try again.");
+    }
+  };
+
+  return (
+    <section className={css["booking-form"]}>
+      <h2 className={css["booking-form__title"]}>Book your car now</h2>
+      <p className={css["booking-form__subtitle"]}>
+        Stay connected! We are always ready to help you.
+      </p>
+
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ errors, touched }) => {
+          const fieldClass = (name: keyof BookingRequest) =>
+            `${css["booking-form__input"]} ${
+              errors[name] && touched[name]
+                ? css["booking-form__input--invalid"]
+                : ""
+            }`;
+          const isInvalid = (name: keyof BookingRequest) =>
+            Boolean(errors[name] && touched[name]);
+
+          return (
+            <Form className={css["booking-form__form"]} noValidate>
+              <div className={css["booking-form__field"]}>
+                {isInvalid("name") && (
+                  <span className={css["booking-form__flag"]}>Name*</span>
+                )}
+                <Field
+                  name="name"
+                  type="text"
+                  placeholder="Name*"
+                  aria-label="Name"
+                  aria-invalid={isInvalid("name")}
+                  className={fieldClass("name")}
+                />
+                {isInvalid("name") && (
+                  <PiWarningCircle
+                    className={css["booking-form__warning"]}
+                    aria-hidden="true"
+                  />
+                )}
+                <ErrorMessage
+                  name="name"
+                  component="span"
+                  className={css["booking-form__error"]}
+                />
+              </div>
+
+              <div className={css["booking-form__field"]}>
+                {isInvalid("email") && (
+                  <span className={css["booking-form__flag"]}>Email*</span>
+                )}
+                <Field
+                  name="email"
+                  type="email"
+                  placeholder="Email*"
+                  aria-label="Email"
+                  aria-invalid={isInvalid("email")}
+                  className={fieldClass("email")}
+                />
+                {isInvalid("email") && (
+                  <PiWarningCircle
+                    className={css["booking-form__warning"]}
+                    aria-hidden="true"
+                  />
+                )}
+                <ErrorMessage
+                  name="email"
+                  component="span"
+                  className={css["booking-form__error"]}
+                />
+              </div>
+
+              <div className={css["booking-form__field"]}>
+                <Field
+                  as="textarea"
+                  name="comment"
+                  rows={3}
+                  placeholder="Comment"
+                  aria-label="Comment"
+                  className={`${fieldClass("comment")} ${css["booking-form__textarea"]}`}
+                />
+                <ErrorMessage
+                  name="comment"
+                  component="span"
+                  className={css["booking-form__error"]}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className={css["booking-form__submit"]}
+                disabled={isPending}
+              >
+                {isPending ? "Sending..." : "Send"}
+              </button>
+            </Form>
+          );
+        }}
+      </Formik>
+    </section>
+  );
+}
