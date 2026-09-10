@@ -1,0 +1,100 @@
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 924px;
+  margin: 0 auto;
+}
+
+.filters__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.filters__field--brand {
+  width: 204px;
+}
+
+.filters__field--price {
+  width: 196px;
+}
+
+.filters__field--mileage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 320px;
+}
+
+.filters__label {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.33;
+  color: var(--color-gray);
+}
+
+.filters__range {
+  display: flex;
+}
+
+.filters__input {
+  width: 160px;
+  height: 44px;
+  padding: 12px 16px;
+  border: none;
+  background-color: var(--color-white);
+  color: var(--color-main);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.filters__input::placeholder {
+  color: var(--color-main);
+}
+
+.filters__input--from {
+  border-right: 1px solid var(--color-border);
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.filters__input--to {
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+.filters__search {
+  width: 156px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  transition: background-color 250ms ease;
+}
+
+.filters__search:hover,
+.filters__search:focus-visible {
+  background-color: var(--color-accent-hover);
+}
+
+.filters__clear {
+  width: 156px;
+  margin-left: auto;
+  border: none;
+  background-color: transparent;
+  color: var(--color-gray);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  transition: color 250ms ease;
+}
+
+.filters__clear:hover,
+.filters__clear:focus-visible {
+  color: var(--color-main);
+}
