@@ -4,6 +4,7 @@ import "modern-normalize/modern-normalize.css";
 import "./globals.css";
 import Header from "@/components/Header/Header";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import ToasterProvider from "@/components/ToasterProvider/ToasterProvider";
 
 const manrope = Manrope({
   weight: ["400", "500", "600", "700"],
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <TanStackProvider>
           <Header />
           <main>{children}</main>
+          <ToasterProvider />
         </TanStackProvider>
       </body>
     </html>
