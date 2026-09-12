@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { isAxiosError } from "axios";
 import {
   PiCalendarBlank,
   PiCar,
@@ -17,11 +18,17 @@ import { formatMileage, formatPrice } from "@/lib/format";
 import type { Car } from "@/types/car";
 import css from "./CarDetails.module.css";
 
+function isMissing(error: unknown): boolean {
+  return isAxiosError(error) && error.response?.status === 404;
+}
+
 async function getCar(carId: string): Promise<Car> {
   try {
     return await fetchCarById(carId);
-  } catch {
-    notFound();
+  } catch (error) {
+    // Only a missing car is a 404; anything else belongs to the error boundary.
+    if (isMissing(error)) notFound();
+    throw error;
   }
 }
 
@@ -43,8 +50,8 @@ export async function generateMetadata({
         images: [{ url: car.img, alt: title }],
       },
     };
-  } catch {
-    return { title: "Car not found" };
+  } catch (error) {
+    return { title: isMissing(error) ? "Car not found" : "Car details" };
   }
 }
 

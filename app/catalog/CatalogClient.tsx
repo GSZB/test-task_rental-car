@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import CarList from "@/components/CarList/CarList";
 import EmptyState from "@/components/EmptyState/EmptyState";
@@ -17,22 +17,35 @@ import css from "./Catalog.module.css";
 
 const NO_FILTERS: CarFilters = {};
 
+const subscribeToNothing = () => () => {};
+
 export default function CatalogClient() {
   const [draft, setDraft] = useState<CarFilters>(NO_FILTERS);
   const [applied, setApplied] = useState<CarFilters>(NO_FILTERS);
+  // The query status differs between the server render and the first client
+  // render, so anything driven by it waits until after hydration.
+  const isHydrated = useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false,
+  );
 
   const { data: filterOptions } = useQuery(carFilterOptionsQueryOptions());
   const {
     data,
+    status,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isFetching,
-    isError,
   } = useInfiniteQuery(carsInfiniteQueryOptions(applied));
 
   const cars = data?.pages.flatMap((page) => page.cars) ?? [];
-  const isReloading = isFetching && !isFetchingNextPage;
+  // Covers the first load and filter changes, but not Load more.
+  const isBusy =
+    isHydrated && (isFetching || status === "pending") && !isFetchingNextPage;
+  // Only a successful response with no cars means the filters matched nothing.
+  const isEmpty = status === "success" && cars.length === 0;
 
   const handleReset = () => {
     setDraft(NO_FILTERS);
@@ -52,13 +65,13 @@ export default function CatalogClient() {
       </div>
 
       <div className={css.catalog__results}>
-        {isError && (
+        {status === "error" && (
           <p className={css.catalog__message} role="alert">
-            Could not load the cars. Please try again later.
+            Could not load the cars. Please check your connection and try again.
           </p>
         )}
 
-        {!isError && cars.length > 0 && (
+        {cars.length > 0 && (
           <>
             <CarList cars={cars} />
             {hasNextPage && (
@@ -72,11 +85,9 @@ export default function CatalogClient() {
           </>
         )}
 
-        {!isError && cars.length === 0 && !isReloading && (
-          <EmptyState onReset={handleReset} />
-        )}
+        {isEmpty && !isBusy && <EmptyState onReset={handleReset} />}
 
-        {isReloading && (
+        {isBusy && (
           <div className={css.catalog__overlay}>
             <Loader />
           </div>
