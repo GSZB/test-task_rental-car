@@ -39,6 +39,7 @@ export default function CatalogClient() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
     isFetching,
   } = useInfiniteQuery(carsInfiniteQueryOptions(applied));
 
@@ -67,7 +68,7 @@ export default function CatalogClient() {
       </div>
 
       <div className={css.catalog__results}>
-        {status === "error" && (
+        {status === "error" && cars.length === 0 && (
           <p className={css.catalog__message} role="alert">
             {isClientError(error)
               ? "These filters could not be applied. Please check the values and try again."
@@ -80,6 +81,11 @@ export default function CatalogClient() {
             <CarList cars={cars} />
             {hasNextPage && (
               <div className={css["catalog__load-more"]}>
+                {isFetchNextPageError && (
+                  <p className={css["catalog__load-more-error"]} role="alert">
+                    Could not load more cars. Please try again.
+                  </p>
+                )}
                 <LoadMoreButton
                   onClick={() => fetchNextPage()}
                   isLoading={isFetchingNextPage}
