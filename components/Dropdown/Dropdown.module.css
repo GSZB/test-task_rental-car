@@ -36,10 +36,6 @@
   text-overflow: ellipsis;
 }
 
-.dropdown__value--placeholder {
-  color: var(--color-main);
-}
-
 .dropdown__icon {
   flex-shrink: 0;
   width: 16px;
@@ -83,8 +79,7 @@
   transition: color 250ms ease;
 }
 
-.dropdown__option:hover,
-.dropdown__option:focus-visible {
+.dropdown__option:hover {
   color: var(--color-main);
 }
 

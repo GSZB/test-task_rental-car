@@ -32,6 +32,7 @@ export default function Dropdown({
   const [activeIndex, setActiveIndex] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const typeaheadRef = useRef({ query: "", timeoutId: 0 });
 
   const listId = `${id}-options`;
   const optionId = (index: number) => `${id}-option-${index}`;
@@ -66,8 +67,41 @@ export default function Dropdown({
   };
 
   const select = (next: string) => {
-    onChange(next === value ? "" : next);
+    onChange(next);
     setIsOpen(false);
+  };
+
+  const findByPrefix = (query: string, startIndex: number) => {
+    for (let offset = 0; offset < options.length; offset += 1) {
+      const index = (startIndex + offset) % options.length;
+
+      if (options[index].label.toLowerCase().startsWith(query)) return index;
+    }
+
+    return -1;
+  };
+
+  // Typing jumps to a matching option: repeating one letter cycles through
+  // its matches, while different letters typed quickly form a prefix.
+  const handleTypeahead = (character: string) => {
+    const buffer = typeaheadRef.current;
+    const key = character.toLowerCase();
+    const isCycling = buffer.query === key;
+    const current = isOpen ? activeIndex : selectedIndex;
+
+    buffer.query = isCycling ? key : buffer.query + key;
+    window.clearTimeout(buffer.timeoutId);
+    buffer.timeoutId = window.setTimeout(() => {
+      buffer.query = "";
+    }, 500);
+
+    const startIndex =
+      isCycling || buffer.query.length === 1 ? current + 1 : current;
+    const match = findByPrefix(buffer.query, Math.max(startIndex, 0));
+
+    if (match < 0) return;
+    if (isOpen) setActiveIndex(match);
+    else open(match);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -103,6 +137,14 @@ export default function Dropdown({
         }
         return;
       default:
+        if (
+          event.key.length === 1 &&
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey
+        ) {
+          handleTypeahead(event.key);
+        }
     }
   };
 
@@ -149,6 +191,9 @@ export default function Dropdown({
           role="listbox"
           aria-labelledby={`${id}-label`}
           ref={listRef}
+          // Keeps focus on the button, otherwise pressing the scrollbar or the
+          // gap between options blurs it and the list closes mid-scroll.
+          onMouseDown={(event) => event.preventDefault()}
         >
           {options.map((option, index) => (
             <li
@@ -159,7 +204,6 @@ export default function Dropdown({
               className={`${css.dropdown__option} ${
                 index === selectedIndex ? css["dropdown__option--selected"] : ""
               } ${index === activeIndex ? css["dropdown__option--active"] : ""}`}
-              onMouseDown={(event) => event.preventDefault()}
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => select(option.value)}
             >

@@ -56,8 +56,7 @@ export interface CarFilterOptions {
 export interface BookingRequest {
   name: string;
   email: string;
-  bookingDate?: string;
-  comment?: string;
+  comment: string;
 }
 
 export interface BookingResponse {

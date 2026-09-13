@@ -2,20 +2,18 @@
 
 import { useState } from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
+import { MAX_NUMBER_DIGITS, toDigits } from "@/lib/filters";
 import type { CarFilterOptions, CarFilters } from "@/types/car";
 import css from "./Filters.module.css";
 
 interface FiltersProps {
-  value: CarFilters;
+  initialValue: CarFilters;
   options?: CarFilterOptions;
-  onChange: (filters: CarFilters) => void;
-  onSearch: () => void;
+  onSearch: (filters: CarFilters) => void;
   onReset: () => void;
 }
 
 const PRICE_STEP = 10;
-// Enough for any real mileage while staying far below the API's safe number limit.
-const MILEAGE_MAX_DIGITS = 9;
 
 function buildPriceOptions(options?: CarFilterOptions) {
   if (!options) return [];
@@ -30,17 +28,13 @@ function buildPriceOptions(options?: CarFilterOptions) {
   return prices.map((price) => ({ value: price, label: price }));
 }
 
-function toMileage(value: string) {
-  return value.replace(/\D/g, "").slice(0, MILEAGE_MAX_DIGITS);
-}
-
 export default function Filters({
-  value,
+  initialValue,
   options,
-  onChange,
   onSearch,
   onReset,
 }: FiltersProps) {
+  const [value, setValue] = useState(initialValue);
   const [isRangeErrorShown, setIsRangeErrorShown] = useState(false);
 
   const brandOptions = (options?.brands ?? []).map((brand) => ({
@@ -64,7 +58,7 @@ export default function Filters({
     }
 
     setIsRangeErrorShown(false);
-    onSearch();
+    onSearch(value);
   };
 
   return (
@@ -77,7 +71,7 @@ export default function Filters({
             placeholder="Choose a brand"
             options={brandOptions}
             value={value.brand ?? ""}
-            onChange={(brand) => onChange({ ...value, brand })}
+            onChange={(brand) => setValue({ ...value, brand })}
           />
         </div>
 
@@ -89,7 +83,7 @@ export default function Filters({
             options={buildPriceOptions(options)}
             value={value.price ?? ""}
             displayValue={value.price ? `To $${value.price}` : undefined}
-            onChange={(price) => onChange({ ...value, price })}
+            onChange={(price) => setValue({ ...value, price })}
           />
         </div>
 
@@ -105,7 +99,7 @@ export default function Filters({
             <input
               type="text"
               inputMode="numeric"
-              maxLength={MILEAGE_MAX_DIGITS}
+              maxLength={MAX_NUMBER_DIGITS}
               placeholder="From"
               aria-label="Mileage from"
               aria-invalid={showRangeError}
@@ -115,16 +109,16 @@ export default function Filters({
               }`}
               value={value.minMileage ?? ""}
               onChange={(event) =>
-                onChange({
+                setValue({
                   ...value,
-                  minMileage: toMileage(event.target.value),
+                  minMileage: toDigits(event.target.value),
                 })
               }
             />
             <input
               type="text"
               inputMode="numeric"
-              maxLength={MILEAGE_MAX_DIGITS}
+              maxLength={MAX_NUMBER_DIGITS}
               placeholder="To"
               aria-label="Mileage to"
               aria-invalid={showRangeError}
@@ -134,9 +128,9 @@ export default function Filters({
               }`}
               value={value.maxMileage ?? ""}
               onChange={(event) =>
-                onChange({
+                setValue({
                   ...value,
-                  maxMileage: toMileage(event.target.value),
+                  maxMileage: toDigits(event.target.value),
                 })
               }
             />
