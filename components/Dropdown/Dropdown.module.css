@@ -91,3 +91,10 @@
 .dropdown__option--selected {
   color: var(--color-main);
 }
+
+.dropdown__option--active {
+  color: var(--color-main);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
