@@ -27,7 +27,7 @@ const validationSchema = Yup.object({
     .trim()
     .matches(/\p{L}/u, "Please enter your name.")
     .min(2, "Please enter your name.")
-    .max(60, "Name is too long")
+    .max(60, "Name is too long.")
     .required("Please enter your name."),
   email: Yup.string()
     .trim()
@@ -35,8 +35,8 @@ const validationSchema = Yup.object({
     .required("Please enter your email."),
   comment: Yup.string()
     .trim()
-    .max(500, "Comment is too long")
-    .required("Comment is required"),
+    .max(500, "Comment is too long.")
+    .required("Please enter a comment."),
 });
 
 interface BookingFormProps {
@@ -152,11 +152,14 @@ export default function BookingForm({ carId }: BookingFormProps) {
               </div>
 
               <div className={css["booking-form__field"]}>
+                {isInvalid("comment") && (
+                  <span className={css["booking-form__flag"]}>Comment*</span>
+                )}
                 <Field
                   as="textarea"
                   name="comment"
                   rows={3}
-                  placeholder="Comment"
+                  placeholder="Comment*"
                   aria-label="Comment"
                   aria-invalid={isInvalid("comment")}
                   aria-describedby={
