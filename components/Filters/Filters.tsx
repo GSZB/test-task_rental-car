@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
-import { MILEAGE_MAX_DIGITS, toMileage } from "@/lib/filters";
+import { MAX_NUMBER_DIGITS, toDigits } from "@/lib/filters";
 import type { CarFilterOptions, CarFilters } from "@/types/car";
 import css from "./Filters.module.css";
 
@@ -99,7 +99,7 @@ export default function Filters({
             <input
               type="text"
               inputMode="numeric"
-              maxLength={MILEAGE_MAX_DIGITS}
+              maxLength={MAX_NUMBER_DIGITS}
               placeholder="From"
               aria-label="Mileage from"
               aria-invalid={showRangeError}
@@ -111,14 +111,14 @@ export default function Filters({
               onChange={(event) =>
                 setValue({
                   ...value,
-                  minMileage: toMileage(event.target.value),
+                  minMileage: toDigits(event.target.value),
                 })
               }
             />
             <input
               type="text"
               inputMode="numeric"
-              maxLength={MILEAGE_MAX_DIGITS}
+              maxLength={MAX_NUMBER_DIGITS}
               placeholder="To"
               aria-label="Mileage to"
               aria-invalid={showRangeError}
@@ -130,7 +130,7 @@ export default function Filters({
               onChange={(event) =>
                 setValue({
                   ...value,
-                  maxMileage: toMileage(event.target.value),
+                  maxMileage: toDigits(event.target.value),
                 })
               }
             />
