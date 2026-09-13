@@ -34,7 +34,7 @@ export async function fetchCars({
 }
 
 export async function fetchCarById(id: string): Promise<Car> {
-  const { data } = await api.get<Car>(`/cars/${id}`);
+  const { data } = await api.get<Car>(`/cars/${encodeURIComponent(id)}`);
 
   return data;
 }
@@ -50,7 +50,7 @@ export async function createBookingRequest(
   booking: BookingRequest,
 ): Promise<BookingResponse> {
   const { data } = await api.post<BookingResponse>(
-    `/cars/${carId}/booking-requests`,
+    `/cars/${encodeURIComponent(carId)}/booking-requests`,
     booking,
   );
 

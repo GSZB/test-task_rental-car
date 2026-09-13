@@ -23,11 +23,18 @@ import css from "./CarDetails.module.css";
 // request per render instead of two.
 const loadCar = cache(fetchCarById);
 
+// Car ids are UUIDs. Anything else must not reach the API, where for example
+// `/cars/filters` is a real endpoint and would be rendered as a car.
+const CAR_ID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function isMissing(error: unknown): boolean {
   return isAxiosError(error) && error.response?.status === 404;
 }
 
 async function getCar(carId: string): Promise<Car> {
+  if (!CAR_ID_PATTERN.test(carId)) notFound();
+
   try {
     return await loadCar(carId);
   } catch (error) {
@@ -41,6 +48,8 @@ export async function generateMetadata({
   params,
 }: PageProps<"/catalog/[carId]">): Promise<Metadata> {
   const { carId } = await params;
+
+  if (!CAR_ID_PATTERN.test(carId)) return { title: "Car not found" };
 
   try {
     const car = await loadCar(carId);
