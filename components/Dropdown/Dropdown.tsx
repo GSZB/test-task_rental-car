@@ -149,7 +149,11 @@ export default function Dropdown({
   };
 
   const selected = selectedIndex >= 0 ? options[selectedIndex] : undefined;
-  const buttonText = selected ? (displayValue ?? selected.label) : placeholder;
+  // A value from a shared link can be missing from the options while it still
+  // filters the cars, so it is shown instead of the placeholder.
+  const buttonText = value
+    ? (displayValue ?? selected?.label ?? value)
+    : placeholder;
 
   return (
     <div className={css.dropdown} ref={wrapperRef}>

@@ -10,7 +10,7 @@ export default function HomePage() {
         src="/hero.jpg"
         alt=""
         fill
-        priority
+        preload
         sizes="100vw"
         className={css.hero__image}
       />
