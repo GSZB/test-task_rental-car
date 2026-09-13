@@ -52,3 +52,11 @@
   justify-content: center;
   padding: 200px 0;
 }
+
+.catalog__load-more-error {
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.43;
+  color: var(--color-error);
+  text-align: center;
+}

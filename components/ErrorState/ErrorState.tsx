@@ -1,17 +1,32 @@
+"use client";
+
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { PiWarningCircle } from "react-icons/pi";
 import css from "./ErrorState.module.css";
 
 interface ErrorStateProps {
   title?: string;
   description?: string;
-  onRetry: () => void;
+  reset: () => void;
 }
 
 export default function ErrorState({
   title = "Something went wrong",
   description = "We could not load this page. Check your connection and try again.",
-  onRetry,
+  reset,
 }: ErrorStateProps) {
+  const router = useRouter();
+  const [isRetrying, startTransition] = useTransition();
+
+  // reset() alone re-renders the segment with the same failed server data, so
+  // the route is refreshed first to make the server fetch again.
+  const handleRetry = () =>
+    startTransition(() => {
+      router.refresh();
+      reset();
+    });
+
   return (
     <div className={css["error-state"]} role="alert">
       <PiWarningCircle
@@ -23,9 +38,10 @@ export default function ErrorState({
       <button
         type="button"
         className={css["error-state__button"]}
-        onClick={onRetry}
+        onClick={handleRetry}
+        disabled={isRetrying}
       >
-        Try again
+        {isRetrying ? "Retrying..." : "Try again"}
       </button>
     </div>
   );

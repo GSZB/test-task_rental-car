@@ -13,7 +13,7 @@ export default function CarDetailsError({ reset }: CarDetailsErrorProps) {
       <ErrorState
         title="Could not load this car"
         description="The car details are unavailable right now. Check your connection and try again."
-        onRetry={reset}
+        reset={reset}
       />
     </Container>
   );
