@@ -101,6 +101,10 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   placeholder="Name*"
                   aria-label="Name"
                   aria-invalid={isInvalid("name")}
+                  aria-describedby={
+                    isInvalid("name") ? "booking-name-error" : undefined
+                  }
+                  autoComplete="name"
                   className={fieldClass("name")}
                 />
                 {isInvalid("name") && (
@@ -110,6 +114,7 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   />
                 )}
                 <ErrorMessage
+                  id="booking-name-error"
                   name="name"
                   component="span"
                   className={css["booking-form__error"]}
@@ -126,6 +131,10 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   placeholder="Email*"
                   aria-label="Email"
                   aria-invalid={isInvalid("email")}
+                  aria-describedby={
+                    isInvalid("email") ? "booking-email-error" : undefined
+                  }
+                  autoComplete="email"
                   className={fieldClass("email")}
                 />
                 {isInvalid("email") && (
@@ -135,6 +144,7 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   />
                 )}
                 <ErrorMessage
+                  id="booking-email-error"
                   name="email"
                   component="span"
                   className={css["booking-form__error"]}
@@ -149,6 +159,10 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   placeholder="Comment"
                   aria-label="Comment"
                   aria-invalid={isInvalid("comment")}
+                  aria-describedby={
+                    isInvalid("comment") ? "booking-comment-error" : undefined
+                  }
+                  autoComplete="off"
                   className={`${fieldClass("comment")} ${css["booking-form__textarea"]}`}
                 />
                 {isInvalid("comment") && (
@@ -158,6 +172,7 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   />
                 )}
                 <ErrorMessage
+                  id="booking-comment-error"
                   name="comment"
                   component="span"
                   className={css["booking-form__error"]}
