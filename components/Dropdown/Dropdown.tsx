@@ -149,6 +149,9 @@ export default function Dropdown({
           role="listbox"
           aria-labelledby={`${id}-label`}
           ref={listRef}
+          // Keeps focus on the button, otherwise pressing the scrollbar or the
+          // gap between options blurs it and the list closes mid-scroll.
+          onMouseDown={(event) => event.preventDefault()}
         >
           {options.map((option, index) => (
             <li
@@ -159,7 +162,6 @@ export default function Dropdown({
               className={`${css.dropdown__option} ${
                 index === selectedIndex ? css["dropdown__option--selected"] : ""
               } ${index === activeIndex ? css["dropdown__option--active"] : ""}`}
-              onMouseDown={(event) => event.preventDefault()}
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => select(option.value)}
             >
