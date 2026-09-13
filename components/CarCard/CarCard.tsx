@@ -6,9 +6,10 @@ import css from "./CarCard.module.css";
 
 interface CarCardProps {
   car: Car;
+  isAboveFold?: boolean;
 }
 
-export default function CarCard({ car }: CarCardProps) {
+export default function CarCard({ car, isAboveFold = false }: CarCardProps) {
   return (
     <article className={css["car-card"]}>
       <div className={css["car-card__image-wrapper"]}>
@@ -17,6 +18,7 @@ export default function CarCard({ car }: CarCardProps) {
           alt={`${car.brand} ${car.model}`}
           fill
           sizes="244px"
+          loading={isAboveFold ? "eager" : "lazy"}
           className={css["car-card__image"]}
         />
       </div>

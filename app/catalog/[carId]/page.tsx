@@ -97,7 +97,7 @@ export default async function CarDetailsPage({
               alt={`${car.brand} ${car.model}`}
               fill
               sizes="640px"
-              priority
+              preload
               className={css.car__image}
             />
           </div>
