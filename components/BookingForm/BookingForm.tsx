@@ -24,7 +24,9 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("Please enter your email.")
     .required("Please enter your email."),
-  comment: Yup.string().max(500, "Comment is too long"),
+  comment: Yup.string()
+    .max(500, "Comment is too long")
+    .required("Comment is required"),
 });
 
 interface BookingFormProps {
@@ -131,8 +133,15 @@ export default function BookingForm({ carId }: BookingFormProps) {
                   rows={3}
                   placeholder="Comment"
                   aria-label="Comment"
+                  aria-invalid={isInvalid("comment")}
                   className={`${fieldClass("comment")} ${css["booking-form__textarea"]}`}
                 />
+                {isInvalid("comment") && (
+                  <PiWarningCircle
+                    className={css["booking-form__warning"]}
+                    aria-hidden="true"
+                  />
+                )}
                 <ErrorMessage
                   name="comment"
                   component="span"
