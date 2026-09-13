@@ -84,7 +84,9 @@
 
 .filters__clear {
   width: 156px;
+  height: 20px;
   margin-left: auto;
+  padding: 0;
   border: none;
   background-color: transparent;
   color: var(--color-gray);
