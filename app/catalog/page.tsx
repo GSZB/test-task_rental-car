@@ -5,6 +5,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import Container from "@/components/Container/Container";
+import { parseFilters } from "@/lib/filters";
 import {
   carFilterOptionsQueryOptions,
   carsInfiniteQueryOptions,
@@ -22,10 +23,19 @@ export const metadata: Metadata = {
     "Browse available cars for rent, filter them by brand, price and mileage, and load more results page by page.",
 };
 
-export default async function CatalogPage() {
+export default async function CatalogPage({
+  searchParams,
+}: PageProps<"/catalog">) {
+  const params = await searchParams;
+  const filters = parseFilters((key) => {
+    const value = params[key];
+
+    return Array.isArray(value) ? value[0] : value;
+  });
+
   const queryClient = new QueryClient();
   await Promise.all([
-    queryClient.prefetchInfiniteQuery(carsInfiniteQueryOptions()),
+    queryClient.prefetchInfiniteQuery(carsInfiniteQueryOptions(filters)),
     queryClient.prefetchQuery(carFilterOptionsQueryOptions()),
   ]);
 

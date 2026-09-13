@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
+import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import CarList from "@/components/CarList/CarList";
 import EmptyState from "@/components/EmptyState/EmptyState";
@@ -8,7 +9,7 @@ import Filters from "@/components/Filters/Filters";
 import Loader from "@/components/Loader/Loader";
 import LoadMoreButton from "@/components/LoadMoreButton/LoadMoreButton";
 import { isClientError } from "@/lib/api/errors";
-import { cleanFilters } from "@/lib/filters";
+import { filtersToSearch, parseFilters } from "@/lib/filters";
 import {
   carFilterOptionsQueryOptions,
   carsInfiniteQueryOptions,
@@ -16,13 +17,14 @@ import {
 import type { CarFilters } from "@/types/car";
 import css from "./Catalog.module.css";
 
-const NO_FILTERS: CarFilters = {};
-
 const subscribeToNothing = () => () => {};
 
 export default function CatalogClient() {
-  const [draft, setDraft] = useState<CarFilters>(NO_FILTERS);
-  const [applied, setApplied] = useState<CarFilters>(NO_FILTERS);
+  const searchParams = useSearchParams();
+  // The URL is the source of truth, so a refresh, a shared link and the Back
+  // button all restore the same filters.
+  const applied = parseFilters((key) => searchParams.get(key));
+  const appliedSearch = filtersToSearch(applied);
   // The query status differs between the server render and the first client
   // render, so anything driven by it waits until after hydration.
   const isHydrated = useSyncExternalStore(
@@ -50,19 +52,30 @@ export default function CatalogClient() {
   // Only a successful response with no cars means the filters matched nothing.
   const isEmpty = status === "success" && cars.length === 0;
 
-  const handleReset = () => {
-    setDraft(NO_FILTERS);
-    setApplied(NO_FILTERS);
+  // pushState updates the search params without a server round trip, so the
+  // current cars stay on screen while the new ones load.
+  const applyFilters = (filters: CarFilters) => {
+    const search = filtersToSearch(filters);
+
+    if (search === appliedSearch) return;
+
+    window.history.pushState(
+      null,
+      "",
+      search ? `?${search}` : window.location.pathname,
+    );
   };
+
+  const handleReset = () => applyFilters({});
 
   return (
     <>
       <div className={css.catalog__filters}>
         <Filters
-          value={draft}
+          key={appliedSearch}
+          initialValue={applied}
           options={filterOptions}
-          onChange={setDraft}
-          onSearch={() => setApplied(cleanFilters(draft))}
+          onSearch={applyFilters}
           onReset={handleReset}
         />
       </div>
