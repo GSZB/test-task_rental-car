@@ -15,16 +15,25 @@ const initialValues: BookingRequest = {
   comment: "",
 };
 
+// Yup's own email check accepts addresses like `test@test` that the backend
+// rejects, so this mirrors the backend: no leading, trailing or doubled dots,
+// and a dotted domain ending in a TLD of at least two letters.
+const EMAIL_PATTERN =
+  /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
+
 const validationSchema = Yup.object({
   name: Yup.string()
+    .trim()
     .matches(/\p{L}/u, "Please enter your name.")
     .min(2, "Please enter your name.")
-    .max(60, "Please enter your name.")
+    .max(60, "Name is too long")
     .required("Please enter your name."),
   email: Yup.string()
-    .email("Please enter your email.")
+    .trim()
+    .matches(EMAIL_PATTERN, "Please enter your email.")
     .required("Please enter your email."),
   comment: Yup.string()
+    .trim()
     .max(500, "Comment is too long")
     .required("Comment is required"),
 });
@@ -44,7 +53,7 @@ export default function BookingForm({ carId }: BookingFormProps) {
     helpers: FormikHelpers<BookingRequest>,
   ) => {
     try {
-      const response = await mutateAsync(values);
+      const response = await mutateAsync(validationSchema.cast(values));
       toast.success(response.message);
       helpers.resetForm();
     } catch {
