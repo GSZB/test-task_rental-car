@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { PiWarningCircle } from "react-icons/pi";
 import * as Yup from "yup";
 import { createBookingRequest } from "@/lib/api/cars";
+import { getApiErrorMessage } from "@/lib/api/errors";
 import type { BookingRequest } from "@/types/car";
 import css from "./BookingForm.module.css";
 
@@ -56,8 +57,13 @@ export default function BookingForm({ carId }: BookingFormProps) {
       const response = await mutateAsync(validationSchema.cast(values));
       toast.success(response.message);
       helpers.resetForm();
-    } catch {
-      toast.error("Could not send your booking request. Please try again.");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          "Could not send your booking request. Please try again.",
+        ),
+      );
     }
   };
 
