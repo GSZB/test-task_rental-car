@@ -56,6 +56,7 @@ export default function CarCard({ car }: CarCardProps) {
         target="_blank"
         rel="noopener noreferrer"
         prefetch={false}
+        aria-label={`Read more about ${car.brand} ${car.model}, ${car.year}, article ${car.stockNumber} (opens in a new tab)`}
         className={css["car-card__button"]}
       >
         Read more
