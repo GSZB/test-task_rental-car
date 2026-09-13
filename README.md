@@ -4,6 +4,8 @@ Front-end for RentalCar, a car rental service. Browse the catalog, narrow it
 down by brand, price and mileage, open a car to see its full specification, and
 book it through a form.
 
+**Live version:** https://test-task-rental-car.vercel.app
+
 ## Features
 
 - **Home page** with a hero section and a call to action leading to the catalog.
