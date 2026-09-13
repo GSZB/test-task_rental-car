@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import type { CarFilterOptions, CarFilters } from "@/types/car";
 import css from "./Filters.module.css";
@@ -13,6 +14,8 @@ interface FiltersProps {
 }
 
 const PRICE_STEP = 10;
+// Enough for any real mileage while staying far below the API's safe number limit.
+const MILEAGE_MAX_DIGITS = 9;
 
 function buildPriceOptions(options?: CarFilterOptions) {
   if (!options) return [];
@@ -27,8 +30,8 @@ function buildPriceOptions(options?: CarFilterOptions) {
   return prices.map((price) => ({ value: price, label: price }));
 }
 
-function digitsOnly(value: string) {
-  return value.replace(/\D/g, "");
+function toMileage(value: string) {
+  return value.replace(/\D/g, "").slice(0, MILEAGE_MAX_DIGITS);
 }
 
 export default function Filters({
@@ -38,13 +41,29 @@ export default function Filters({
   onSearch,
   onReset,
 }: FiltersProps) {
+  const [isRangeErrorShown, setIsRangeErrorShown] = useState(false);
+
   const brandOptions = (options?.brands ?? []).map((brand) => ({
     value: brand,
     label: brand,
   }));
 
+  const isRangeInvalid = Boolean(
+    value.minMileage &&
+    value.maxMileage &&
+    Number(value.minMileage) > Number(value.maxMileage),
+  );
+  const showRangeError = isRangeErrorShown && isRangeInvalid;
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isRangeInvalid) {
+      setIsRangeErrorShown(true);
+      return;
+    }
+
+    setIsRangeErrorShown(false);
     onSearch();
   };
 
@@ -86,32 +105,47 @@ export default function Filters({
             <input
               type="text"
               inputMode="numeric"
+              maxLength={MILEAGE_MAX_DIGITS}
               placeholder="From"
               aria-label="Mileage from"
-              className={`${css.filters__input} ${css["filters__input--from"]}`}
+              aria-invalid={showRangeError}
+              aria-describedby={showRangeError ? "mileage-error" : undefined}
+              className={`${css.filters__input} ${css["filters__input--from"]} ${
+                showRangeError ? css["filters__input--invalid"] : ""
+              }`}
               value={value.minMileage ?? ""}
               onChange={(event) =>
                 onChange({
                   ...value,
-                  minMileage: digitsOnly(event.target.value),
+                  minMileage: toMileage(event.target.value),
                 })
               }
             />
             <input
               type="text"
               inputMode="numeric"
+              maxLength={MILEAGE_MAX_DIGITS}
               placeholder="To"
               aria-label="Mileage to"
-              className={`${css.filters__input} ${css["filters__input--to"]}`}
+              aria-invalid={showRangeError}
+              aria-describedby={showRangeError ? "mileage-error" : undefined}
+              className={`${css.filters__input} ${css["filters__input--to"]} ${
+                showRangeError ? css["filters__input--invalid"] : ""
+              }`}
               value={value.maxMileage ?? ""}
               onChange={(event) =>
                 onChange({
                   ...value,
-                  maxMileage: digitsOnly(event.target.value),
+                  maxMileage: toMileage(event.target.value),
                 })
               }
             />
           </div>
+          {showRangeError && (
+            <p className={css.filters__error} id="mileage-error" role="alert">
+              &quot;From&quot; cannot be greater than &quot;To&quot;
+            </p>
+          )}
         </div>
 
         <button type="submit" className={css.filters__search}>

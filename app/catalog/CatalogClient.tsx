@@ -7,6 +7,7 @@ import EmptyState from "@/components/EmptyState/EmptyState";
 import Filters from "@/components/Filters/Filters";
 import Loader from "@/components/Loader/Loader";
 import LoadMoreButton from "@/components/LoadMoreButton/LoadMoreButton";
+import { isClientError } from "@/lib/api/errors";
 import { cleanFilters } from "@/lib/filters";
 import {
   carFilterOptionsQueryOptions,
@@ -34,6 +35,7 @@ export default function CatalogClient() {
   const {
     data,
     status,
+    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -67,7 +69,9 @@ export default function CatalogClient() {
       <div className={css.catalog__results}>
         {status === "error" && (
           <p className={css.catalog__message} role="alert">
-            Could not load the cars. Please check your connection and try again.
+            {isClientError(error)
+              ? "These filters could not be applied. Please check the values and try again."
+              : "Could not load the cars. Please check your connection and try again."}
           </p>
         )}
 
