@@ -12,6 +12,10 @@ import {
 import CatalogClient from "./CatalogClient";
 import css from "./Catalog.module.css";
 
+// A prerendered catalog would ship build-time data that is already stale on
+// arrival, so the client refetched page 1 on every visit.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Catalog",
   description:
