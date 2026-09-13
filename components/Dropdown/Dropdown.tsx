@@ -66,7 +66,7 @@ export default function Dropdown({
   };
 
   const select = (next: string) => {
-    onChange(next === value ? "" : next);
+    onChange(next);
     setIsOpen(false);
   };
 
