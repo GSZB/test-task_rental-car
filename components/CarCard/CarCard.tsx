@@ -23,11 +23,11 @@ export default function CarCard({ car }: CarCardProps) {
 
       <div className={css["car-card__body"]}>
         <div className={css["car-card__heading"]}>
-          <h3 className={css["car-card__title"]}>
+          <h2 className={css["car-card__title"]}>
             {car.brand}{" "}
             <span className={css["car-card__model"]}>{car.model}</span>,{" "}
             {car.year}
-          </h3>
+          </h2>
           <p className={css["car-card__price"]}>
             {formatPrice(car.rentalPrice)}
           </p>
