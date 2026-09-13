@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -18,13 +19,17 @@ import { formatMileage, formatPrice } from "@/lib/format";
 import type { Car } from "@/types/car";
 import css from "./CarDetails.module.css";
 
+// Both generateMetadata and the page need the car; cache() makes that one
+// request per render instead of two.
+const loadCar = cache(fetchCarById);
+
 function isMissing(error: unknown): boolean {
   return isAxiosError(error) && error.response?.status === 404;
 }
 
 async function getCar(carId: string): Promise<Car> {
   try {
-    return await fetchCarById(carId);
+    return await loadCar(carId);
   } catch (error) {
     // Only a missing car is a 404; anything else belongs to the error boundary.
     if (isMissing(error)) notFound();
@@ -38,7 +43,7 @@ export async function generateMetadata({
   const { carId } = await params;
 
   try {
-    const car = await fetchCarById(carId);
+    const car = await loadCar(carId);
     const title = `${car.brand} ${car.model}, ${car.year}`;
 
     return {
