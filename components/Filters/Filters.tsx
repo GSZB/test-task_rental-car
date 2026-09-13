@@ -61,6 +61,14 @@ export default function Filters({
     onSearch(value);
   };
 
+  // Clears the draft here too: with no filters in the URL, resetting them
+  // changes nothing the catalog sees, so the form would keep its values.
+  const handleClear = () => {
+    setValue({});
+    setIsRangeErrorShown(false);
+    onReset();
+  };
+
   return (
     <form className={css.filters} onSubmit={handleSubmit}>
       <div className={css.filters__row}>
@@ -147,7 +155,11 @@ export default function Filters({
         </button>
       </div>
 
-      <button type="button" className={css.filters__clear} onClick={onReset}>
+      <button
+        type="button"
+        className={css.filters__clear}
+        onClick={handleClear}
+      >
         Clear filters
       </button>
     </form>
