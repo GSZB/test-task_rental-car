@@ -13,7 +13,7 @@ export default function CatalogError({ reset }: CatalogErrorProps) {
       <ErrorState
         title="Could not load the catalog"
         description="The car list is unavailable right now. Check your connection and try again."
-        onRetry={reset}
+        reset={reset}
       />
     </Container>
   );

@@ -49,3 +49,8 @@
   border-color: var(--color-accent-hover);
   color: var(--color-accent-hover);
 }
+
+.error-state__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
